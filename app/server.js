@@ -22,6 +22,7 @@ app.use(express.json());
 // QUICK CURL TESTS
 // create-account: curl -X POST http://localhost:3000/create-account --json '{"username":"vanessa","password":"rawr"}'
 // delete-account: curl -X DELETE http://localhost:3000/delete-account -H "Content-Type: application/json" -d '{"username": "vanessa"}'
+// get-user-folders: curl "http://localhost:3000/get-user-folders?username=vanessa"
 
 app.post("/create-account", (req, res) => {
     let reqBody = req.body;
@@ -36,7 +37,7 @@ app.post("/create-account", (req, res) => {
             res.send();
         }).catch(err => {
             console.log("Error inserting user:", err);
-            res.status(500)
+            res.status(500);
             res.send();
         });
     } else {
@@ -56,17 +57,17 @@ app.delete("/delete-account", (req, res) => {
             .then(result => {
                 if (result.rows.length > 0) {
                     console.log(`Deleted user: ${userName}`);
-                    res.status(200)
-                    res.json({ message: `Account for ${userName} has been deleted successfully.` });
+                    res.status(200);
+                    res.json({ message: `${userName} has been deleted successfully.` });
                 } else {
                     console.log(`User not found: ${userName}`);
-                    res.status(404)
+                    res.status(404);
                     res.json({ error: "User not found." });
                 }
             })
             .catch(err => {
                 console.error("Error deleting user:", err);
-                res.status(500)
+                res.status(500);
                 res.json({ error: "Server error" });
             });
     } else {
@@ -75,6 +76,58 @@ app.delete("/delete-account", (req, res) => {
     }
 });
 
+app.get("/get-user-folders", (req, res) => {
+    let username = req.query.username;
+
+    if (!username) {
+        res.json({ error: "Username is required" });
+        res.status(400);
+        return;
+    }
+
+    // plan here: query for the user's folders whenever we figure out how notes are implemented and then basically send back the whole folder system
+    pool.query('SELECT id FROM users WHERE username = $1;', [username])
+        .then(result => {
+            if (result.rows.length > 0) {
+                let userId = result.rows[0].id;
+
+                let userInfo = {
+                    userName: username,
+                    userId: userId,
+                    // this part will prob need to be change
+                    folders: {
+                        "folderName": "RootFolder",
+                        "folders": [
+                            {
+                                "folderName": "Subfolder1",
+                                "folders": []
+                            },
+                            {
+                                "folderName": "Subfolder2",
+                                "folders": []
+                            },
+                            {
+                                "folderName": "Subfolder3",
+                                "folders": []
+                            }
+                        ]
+                    }
+                };
+
+                res.status(200);
+                res.json(userInfo);
+            } else {
+                res.status(404);
+                res.json({ error: "User not found" });
+            }
+        })
+        .catch(err => {
+            console.error("Error querying user:", err);
+            res.status(500);
+            res.json({ error: "Server error" });
+    });
+});
+
 app.listen(port, hostname, () => {
-  console.log(`Listening at: http://${hostname}:${port}`);
+    console.log(`Listening at: http://${hostname}:${port}`);
 });
