@@ -128,6 +128,114 @@ app.get("/get-user-folders", (req, res) => {
     });
 });
 
+app.get("/folder", (req, res) => {
+    let query = req.query;
+    if (!query.hasOwnProperty("name")) {
+        console.log("Missing name");
+        res.status(400).json({ error: "Missing name." });
+    }
+    else {
+        // endpoint response will need to be changed to better suit /get-user-folders endpoint
+        // maybe want to return the notes in the folder?
+        let name = query.name;
+        pool.query(`SELECT * FROM folders WHERE name = $1`, [name]).then((result) => {
+            console.log("Retrieved:");
+            console.log(result.rows);
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "text/json");
+            res.json({ folder: result.rows });
+        }).catch((error) => {
+            console.log(error);
+            res.statusCode = 500;
+            res.send();
+        });
+    }
+});
+
+app.post("/folder", (req, res) => {
+    let body = req.body;
+    if(body.hasOwnProperty("name") && body.hasOwnProperty("user_id")) {
+        let name = body.name;
+        let user_id = body.user_id;
+        // Creating non-root folder
+        if(body.hasOwnProperty("parent_id")) {
+            let parent_id = body.parent_id;
+            pool.query(
+                `INSERT INTO folders(name, user_id, parent_id) 
+                VALUES($1, $2, $3)
+                RETURNING *`,
+                [name, user_id, parent_id],
+            )
+            .then((result) => {
+                console.log("Inserted:");
+                console.log(result.rows);
+                res.statusCode = 200;
+                res.send();
+            })
+            .catch((error) => {
+                console.log("Error creating folder:", error);
+                res.statusCode = 500;
+                res.send();
+            });
+        }
+        // Creating root folder
+        else {
+            pool.query(
+                `INSERT INTO folders(name, user_id) 
+                VALUES($1, $2)
+                RETURNING *`,
+                [name, user_id],
+            )
+            .then((result) => {
+                console.log("Inserted:");
+                console.log(result.rows);
+                res.statusCode = 200;
+                res.send();
+            })
+            .catch((error) => {
+                console.log("Error creating folder:", error);
+                res.statusCode = 500;
+                res.send();
+            });
+        }
+    }
+    else {
+      console.log("Missing name or user_id");
+      res.status(400).json({ error: "Missing or user_id." });
+    }
+});
+
+app.delete("/folder", (req, res) => {
+    let query = req.query;
+    if(query.hasOwnProperty("name")) {
+        let name = query.name;
+        pool.query(
+            `DELETE FROM folders WHERE name = $1
+            RETURNING *`,
+            [name],
+        )
+        .then((result) => {
+            if (result.rows.length > 0) {
+                console.log(`Deleted folder: ${name}`);
+                res.status(200);
+                res.json({ message: `${name} has been deleted successfully.` });
+            } else {
+                console.log(`Folder not found: ${name}`);
+                res.status(404);
+                res.json({ error: "Folder not found." });
+            }
+        })
+        .catch((error) => {
+            console.log("Error deleting folder:", error);
+            res.status(500);
+            res.json({ error: "Server error" });
+        });
+    } else {
+        console.log("Missing name");
+        res.status(400).json({ error: "Missing name." });
+    }
+});
+
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
