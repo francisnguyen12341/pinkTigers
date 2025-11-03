@@ -130,11 +130,7 @@ app.get("/get-user-folders", (req, res) => {
 
 app.get("/folder", (req, res) => {
     let query = req.query;
-    if (!query.hasOwnProperty("name")) {
-        console.log("Missing name");
-        res.status(400).json({ error: "Missing name." });
-    }
-    else {
+    if (query.hasOwnProperty("name")) {
         // endpoint response will need to be changed to better suit /get-user-folders endpoint
         // maybe want to return the notes in the folder?
         let name = query.name;
@@ -149,6 +145,10 @@ app.get("/folder", (req, res) => {
             res.statusCode = 500;
             res.send();
         });
+    }
+    else {
+        console.log("Missing name");
+        res.status(400).json({ error: "Missing name." });
     }
 });
 
@@ -218,16 +218,19 @@ app.delete("/folder", (req, res) => {
             if (result.rows.length > 0) {
                 console.log(`Deleted folder: ${name}`);
                 res.status(200);
+                res.setHeader("Content-Type", "text/json");
                 res.json({ message: `${name} has been deleted successfully.` });
             } else {
                 console.log(`Folder not found: ${name}`);
                 res.status(404);
+                res.setHeader("Content-Type", "text/json");
                 res.json({ error: "Folder not found." });
             }
         })
         .catch((error) => {
             console.log("Error deleting folder:", error);
             res.status(500);
+            res.setHeader("Content-Type", "text/json");
             res.json({ error: "Server error" });
         });
     } else {
