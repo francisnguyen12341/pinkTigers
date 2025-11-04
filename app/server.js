@@ -115,6 +115,7 @@ app.get("/get-user-folders", (req, res) => {
                 };
 
                 res.status(200);
+                res.setHeader("Content-Type", "text/json");
                 res.json(userInfo);
             } else {
                 res.status(404);
