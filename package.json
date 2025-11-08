@@ -2,9 +2,12 @@
     "scripts": {
         "start": "cd app && node server.js",
         "setup": "psql -U postgres -f setup.sql",
-        "drop": "psql -U postgres -f drop.sql"
+        "drop": "psql -U postgres -f drop.sql",
+        "runTest": "psql -U postgres -f drop.sql && psql -U postgres -f setup.sql && cd app && node server.js"
     },
     "dependencies": {
+        "argon2": "^0.30.3",
+        "cookie-parser": "^1.4.6",
         "express": "^4.18.2",
         "pg": "^8.8.0"
     }
