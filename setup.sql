@@ -22,6 +22,11 @@ CREATE TABLE notes (
   folder_id INTEGER NOT NULL REFERENCES folders(id) ON DELETE CASCADE
 );
 
+CREATE TABLE tokens (
+  token VARCHAR(100) NOT NULL,
+  username VARCHAR(20) NOT NULL REFERENCES users(username) ON DELETE CASCADE
+);
+
 ALTER TABLE users
   ADD CONSTRAINT fk_main_folder
   FOREIGN KEY (main_folder_id) REFERENCES folders(id);
