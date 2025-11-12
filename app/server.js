@@ -5,6 +5,9 @@ const pg = require("pg");
 const express = require("express");
 const app = express();
 
+// nodes graphic library; Cytoscape.js will be used
+const cytoscape = require('cytoscape');
+
 const port = 3000;
 const hostname = "localhost";
 
@@ -378,4 +381,19 @@ app.delete("/folder", (req, res) => {
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
+});
+
+
+//end points for making notes
+app.get("/notes", async (req, res) => {
+  try {
+    console.log("Fetching notes...");
+    const result = await pool.query("SELECT id, name, text FROM notes");
+    console.log("Query result:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching notes:", err.message);
+    console.error(err.stack);
+    res.status(500).json({ error: "Server error" });
+  }
 });
