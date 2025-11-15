@@ -58,6 +58,7 @@ app.post("/create-account", async (req, res) => {
             if (err.code === "23505") {
                 // Username already exists
 
+                res.status(400);
                 res.json({
                     error: "Username already exists",
                 });
