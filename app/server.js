@@ -18,7 +18,7 @@ pool.connect().then(function () {
     console.log(`Connected to database ${env.database}`);
 });
 
-// app.use(express.static("public"));
+app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -49,14 +49,29 @@ app.post("/create-account", async (req, res) => {
         let userName = reqBody.username;
         let password = reqBody.password;
         let passHash = await argon2.hash(password);
+        let insertSuccess = false;
 
         await pool.query(`INSERT INTO users (username, password) VALUES ($1, $2);`, [userName, passHash]).then(() => {
             console.log(`Successfully added user: ${userName}`);
+            insertSuccess = true;
         }).catch(err => {
+            if (err.code === "23505") {
+                // Username already exists
+
+                res.status(400);
+                res.json({
+                    error: "Username already exists",
+                });
+            }
+
             console.log("Error inserting user:", err);
             res.status(500);
             res.send();
         });
+
+        if (!insertSuccess) {
+            return;
+        }
 
         let token = makeToken();
 
@@ -378,12 +393,6 @@ app.delete("/folder", (req, res) => {
 });
 
 
-
-app.listen(port, hostname, () => {
-    console.log(`Listening at: http://${hostname}:${port}`);
-});
-
-
 //end points for making notes
 app.get("/notes", async (req, res) => {
   try {
@@ -396,4 +405,9 @@ app.get("/notes", async (req, res) => {
     console.error(err.stack);
     res.status(500).json({ error: "Server error" });
   }
+});
+
+
+app.listen(port, hostname, () => {
+    console.log(`Listening at: http://${hostname}:${port}`);
 });
