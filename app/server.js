@@ -11,12 +11,38 @@ const cytoscape = require('cytoscape');
 const port = 3000;
 const hostname = "localhost";
 
-const env = require("../env.json");
+//const env = require("../env.json"); commented out  for backend-server sake
+
+// example code for loading environment details in railway
+require("dotenv").config();
+
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+////////
+
+
+
+/* old pool connectivity
+
 const Pool = pg.Pool;
 const pool = new Pool(env);
 pool.connect().then(function () {
     console.log(`Connected to database ${env.database}`);
 });
+*/
+// ⭐ Railway PostgreSQL connection
+const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
+
+pool.connect()
+    .then(() => console.log("Connected to Railway PostgreSQL"))
+    .catch(err => console.error("Database connection error:", err));
+
+
+
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -378,10 +404,20 @@ app.delete("/folder", (req, res) => {
 });
 
 
-
+/*old local listening port
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
+*/
+
+//new
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+//
+
+
 
 
 //end points for making notes
