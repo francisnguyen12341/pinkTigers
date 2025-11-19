@@ -443,7 +443,3 @@ app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
 */
-// new railway hosting listen port
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
