@@ -29,7 +29,7 @@ pool.connect().then(function () {
 
 //app.use, listen only to the vercel app.
 app.use(cors({
-    origin: ["https://pink-tigers-c8mus0uee-ftn23s-projects.vercel.app/"], 
+    origin: ["https://pink-tigers.vercel.app/"], 
     credentials: true
 }));
 
