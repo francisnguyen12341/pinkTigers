@@ -18,6 +18,8 @@ pool.connect().then(function () {
     console.log(`Connected to database ${env.database}`);
 });
 
+//test commit
+
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
