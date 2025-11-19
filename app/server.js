@@ -4,6 +4,7 @@ let cookieParser = require("cookie-parser");
 const pg = require("pg");
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 // nodes graphic library; Cytoscape.js will be used
 const cytoscape = require('cytoscape');
