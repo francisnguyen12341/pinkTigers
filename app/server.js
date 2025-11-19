@@ -29,9 +29,12 @@ pool.connect().then(function () {
 
 //app.use, listen only to the vercel app.
 app.use(cors({
-    origin: ["https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app/"], 
+    origin: ["https://pink-tigers-c8mus0uee-ftn23s-projects.vercel.app/"], 
     credentials: true
 }));
+
+
+//test
 
 // PostgreSQL connection from railway back end to rail way database
 const Pool = pg.Pool;
