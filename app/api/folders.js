@@ -98,17 +98,16 @@ app.get("/folder", (req, res) => {
 
 app.post("/folder", (req, res) => {
     let body = req.body;
-    if (body.hasOwnProperty("name") && body.hasOwnProperty("user_id")) {
+    if (body.hasOwnProperty("name")) {
         let name = body.name;
-        let user_id = body.user_id;
         // Creating non-root folder
         if (body.hasOwnProperty("parent_id")) {
             let parent_id = body.parent_id;
             pool.query(
-                `INSERT INTO folders(name, user_id, parent_id) 
-                VALUES($1, $2, $3)
+                `INSERT INTO folders(name, parent_id) 
+                VALUES($1, $2)
                 RETURNING *`,
-                [name, user_id, parent_id],
+                [name, parent_id],
             )
                 .then((result) => {
                     console.log("Inserted:");
@@ -125,10 +124,10 @@ app.post("/folder", (req, res) => {
         // Creating root folder
         else {
             pool.query(
-                `INSERT INTO folders(name, user_id) 
-                VALUES($1, $2)
+                `INSERT INTO folders(name) 
+                VALUES($1)
                 RETURNING *`,
-                [name, user_id],
+                [name],
             )
                 .then((result) => {
                     console.log("Inserted:");
@@ -144,8 +143,8 @@ app.post("/folder", (req, res) => {
         }
     }
     else {
-        console.log("Missing name or user_id");
-        res.status(400).json({ error: "Missing or user_id." });
+        console.log("Missing name");
+        res.status(400).json({ error: "Missing name." });
     }
 });
 
@@ -180,6 +179,95 @@ app.delete("/folder", (req, res) => {
     } else {
         console.log("Missing name");
         res.status(400).json({ error: "Missing name." });
+    }
+});
+
+async function createNavBar() {
+    try {
+        let sideNav = "";
+
+        // Get all folders
+        let result = await pool.query(`SELECT * FROM folders`);
+        let allFolders = result.rows;
+
+        // Create object for folder hierarchy (to know which folders have children)
+        let folderHierarchy = {};
+        for (let folder of allFolders) {
+            if (folder.parent_id != null) {
+                if(!folderHierarchy[folder.parent_id]) {
+                    folderHierarchy[folder.parent_id] = [];
+                }
+                folderHierarchy[folder.parent_id].push(folder);
+            }
+        }
+
+        // Go through all folders and generate HTML for the folder side nav
+        for (let folder of allFolders) {
+            // Single Top Level Folder: Has no children and is not a child of anyone else
+            if (!folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
+                sideNav += `<a href="#${folder.name}">${folder.name}</a>`;
+            } // Top Level Folder: Has children and is not a child of anyone else
+            else if (folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
+                sideNav += await createChildren(folder, folderHierarchy);
+            }
+        }
+        return sideNav;
+    } catch (error) {
+        console.error("Error in creating nav bar:", error);
+    }
+}
+
+function isAChild(folder, folderHierarchy) {
+    // for each key-value pair of folderHierarchy
+    for(let folderId in folderHierarchy) {
+        let folderChildren = folderHierarchy[folderId]
+        // cycle through all children of a given folder
+        for(let child of folderChildren) {
+            // inputted folder is a child of another folder
+            if(child.id === folder.id) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+async function createChildren(folder, folderHierarchy) {
+    sideNavChildren = "";
+    sideNavChildren += `
+                <button class="dropdown-btn ${folder.name}"> ${folder.name}
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">`
+    // Go through all child folders of a given folder
+    for(let childFolder of folderHierarchy[folder.id]) {
+        // The child folder has no child folders under it
+        if(!folderHierarchy[childFolder.id]) {
+            sideNavChildren += `<a href="#${childFolder.name}">${childFolder.name}</a>`;
+        }
+        // The child folder has more child folders under it (nested children)
+        else {
+            sideNavChildren += await createChildren(childFolder, folderHierarchy);
+        }
+    }
+    // Terminate dropdown-container
+    sideNavChildren += `</div>`
+    return sideNavChildren;
+}
+
+app.get("/sidenav", async (req, res) => {
+    try {
+        const navBar = await createNavBar();
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "text/html");
+        res.send(`
+            <div class="sidenav">
+                ${navBar}
+            </div>
+        `);
+    } catch (error) {
+        console.error("Error generating sidebar:", error);
+        res.status(500).json({ error: "Error generating sidebar" });
     }
 });
 
