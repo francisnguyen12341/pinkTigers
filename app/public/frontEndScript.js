@@ -39,6 +39,32 @@ document.getElementById('addNodeButton').addEventListener('click', () => {
   };
   cy.add(newNode);
   cy.layout({ name: 'cose' }).run();
+
+  // curl -X POST -H "Content-Type:application/json" -d "{\"username\": \"testUser\", \"password\": \"testPass\"}" http://localhost:3000/create-account
+  // curl -X POST -H "Content-Type:application/json" -d "{\"name\": \"testFolder1\", \"user_id\": 1}" http://localhost:3000/folder
+  
+  // curl http://localhost:3000/notes"
+  const errorDiv = document.getElementById("errorDiv");
+
+  fetch("/notes", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+          name: 'Node ' + nodeCount,
+          text: '',
+          folder_id: 1,
+      }),
+  }).then(response => {
+      if (response.status !== 200) {
+          response.json().then(body => {
+              errorDiv.textContent = body.error;
+          });
+          return;
+      }
+  });
 });
 
 // Open EasyMDE editor
@@ -59,6 +85,8 @@ document.getElementById('saveNodeText').addEventListener('click', () => {
     activeNode.data('content', newText);
   }
   document.getElementById('editorModal').style.display = 'none';
+
+  // call, using fetch, notes PUT to update the content 
 });
 
 // Cancel editor
@@ -125,6 +153,7 @@ document.getElementById('confirmRenameBtn').addEventListener('click', () => {
     selectedNode.data('label', newName);
   }
   renameModal.hide();
+  // call, using fetch, notes PUT to update the content 
 });
 
 // Delete node
