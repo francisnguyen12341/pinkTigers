@@ -5,13 +5,13 @@ CREATE TABLE folders (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   parent_id INTEGER REFERENCES folders(id) ON DELETE CASCADE
-);
+);  
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(20) NOT NULL UNIQUE,
   password VARCHAR(100) NOT NULL,
-  main_folder_id INTEGER
+  main_folder_id INTEGER REFERENCES folders(id) ON DELETE CASCADE
 );
 
 CREATE TABLE notes (
