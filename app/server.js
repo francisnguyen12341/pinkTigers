@@ -36,7 +36,7 @@ app.use(cors({
 //test
 
 // PostgreSQL connection from railway back end to rail way database
-//const Pool = pg.Pool;
+const Pool = pg.Pool;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
