@@ -36,11 +36,15 @@ app.use(cors({
 //test
 
 // PostgreSQL connection from railway back end to rail way database
-const Pool = pg.Pool;
+//const Pool = pg.Pool;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+//adding this below because our roots files need access to postgres sql. each file needs access to pool/database and this export allows other files to access it.
+module.exports.pool = pool;
+
 
 // Start server (Railway)
 const port = process.env.PORT || 3000;
@@ -62,7 +66,7 @@ app.get("/private", authorize, (req, res) => {
 });
 
 
-/* local port  stuff below. reminder that connection.js is reading local port as well?
+/* local port  stuff below. reminder that connection.js is reading local port as well? it is the local sql data base oops in connection. below is local server hosting on lcoal machine.
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
