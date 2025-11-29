@@ -63,4 +63,3 @@ app.get("/private", authorize, (req, res) => {
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
-*/
