@@ -61,6 +61,9 @@ app.get("/private", authorize, (req, res) => {
     return res.send("A private message\n");
 });
 
+
+/* local port  stuff below. reminder that connection.js is reading local port as well?
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
+*/
