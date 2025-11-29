@@ -3,6 +3,7 @@ const express = require("express");
 const authorize = require("./utils/auth");
 const app = express();
 const cors = require("cors");
+const pg = require("pg");
 
 // nodes graphic library; Cytoscape.js will be used
 const cytoscape = require('cytoscape');
