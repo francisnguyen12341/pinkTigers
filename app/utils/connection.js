@@ -1,3 +1,4 @@
+/*
 const pg = require("pg");
 const env = require("../../env.json");
 
@@ -8,3 +9,4 @@ pool.connect().then(function () {
 });
 
 module.exports = pool;
+*/
