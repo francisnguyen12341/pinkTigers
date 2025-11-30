@@ -1,3 +1,11 @@
+/*
+    Date: 11/30/2025
+    Comments from Francis for post Francis development and deployment of backend data base.
+    Previously, we had our pool database set up in our server. I moved it over to its own .js file called database in utils
+    I also added in const pool = require("./utils/database"). I forgot why.
+*/
+
+
 let cookieParser = require("cookie-parser");
 const express = require("express");
 const authorize = require("./utils/auth");
@@ -10,32 +18,8 @@ const cytoscape = require('cytoscape');
 const pool = require("./utils/database");
 
 
-/* changing for Railway back end
-const port = 3000;
-const hostname = "localhost";
-*/
-//rail way port
-//const port = process.env.PORT || 3000;
 
-
-/* changing this because this uses local system file environment variables. need to use it on railway
-const env = require("../env.json");
-const Pool = pg.Pool;
-const pool = new Pool(env);
-pool.connect().then(function () {
-    console.log(`Connected to database ${env.database}`);
-});
-*/
-
-//app.use, listen only to the vercel app. //adding my own specific deployment for my own testing
-/* old app.use cors testing new one because i get a access denied with this one
-app.use(cors({
-    origin: ["https://pink-tigers.vercel.app"
-    ], 
-    credentials: true
-}));
-*/
-//origin linked to both production and my current branch?
+//cors validation.
 app.use(cors({
   origin: [
     "https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app",
@@ -46,9 +30,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-//app.options('*', cors());
-
-//app.use(express.static("public")); commenting this because front end lives on Vercel not Railway.
+//app.use(express.static("public")); commenting this because front end lives on Vercel not Railway. I think this was used for local testing too idk
 app.use(express.json());
 app.use(cookieParser());
 
@@ -60,7 +42,7 @@ app.get("/private", authorize, (req, res) => {
 });
 
 
-/* local port  stuff below. reminder that connection.js is reading local port as well? it is the local sql data base oops in connection. below is local server hosting on lcoal machine.
+/* local port stuff for hosting server in local machine. commented out for deployment usage stuff below.
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
