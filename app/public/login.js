@@ -1,3 +1,12 @@
+/*
+    Date: 11/30/2025
+    Comments from Francis for post Francis development and deployment of backend data base.
+    Previously, our fetch request were simply /create-account and /login, Presumably because of local  testing
+    I have switched it to "https://pinktigers-localbranchtesting.up.railway.app/" which is the Public Networking link that we have in Railway which can be found in the project component settings in Railway.
+    For this one specifically, its in localbranchtesting environment which is linked to the francis-deployment-test branch. Will need to be adjusted for production release
+*/
+
+
 const usernameField = document.getElementById('username');
 const passwordField = document.getElementById('password');
 const repeatPasswordField = document.getElementById('repeatPassword');
