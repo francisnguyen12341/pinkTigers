@@ -8,4 +8,5 @@ const pool = new Pool({
 });
 
 //adding this below because our roots files need access to postgres sql. each file needs access to pool/database and this export allows other files to access it.
-module.exports = pool;
+module.exports = { pool };
+
