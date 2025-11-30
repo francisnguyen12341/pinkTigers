@@ -65,7 +65,7 @@ function sendCreateAccountRequest() {
 function sendLoginRequest() {
     fetch("https://pinktigers-localbranchtesting.up.railway.app/login", {
         method: "POST",
-        redentials: "include",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
