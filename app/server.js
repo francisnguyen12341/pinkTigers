@@ -28,8 +28,7 @@ pool.connect().then(function () {
 
 //app.use, listen only to the vercel app. //adding my own specific deployment for my own testing
 app.use(cors({
-    origin: ["https://pink-tigers.vercel.app",
-            "https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app"
+    origin: ["https://pink-tigers.vercel.app"
     ], 
     credentials: true
 }));
