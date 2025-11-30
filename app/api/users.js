@@ -1,4 +1,6 @@
-const pool = require("../utils/connection");
+//changing the pool here because im assuming this is to pull module from connection which im changing
+//const pool = require("../utils/connection");
+const { pool } = require("../index");
 const app = require("express").Router();
 let argon2 = require("argon2");
 const crypto = require('crypto');
