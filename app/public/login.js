@@ -18,7 +18,7 @@ const password2Field = document.getElementById('password2');
 const submit2Button = document.getElementById("submit2");
 const loginMessageDiv = document.getElementById("loginMessage");
 
-const backend = process.env.RAILWAY_DATABASE_PUBLIC_URL;
+const backend = window.ENV.BACKEND_URL;
 
 
 function checkPasswordMatch() {
