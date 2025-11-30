@@ -3,7 +3,8 @@
         "start": "cd app && node server.js",
         "setup": "psql -U postgres -f setup.sql",
         "drop": "psql -U postgres -f drop.sql",
-        "runTest": "psql -U postgres -f drop.sql && psql -U postgres -f setup.sql && cd app && node server.js"
+        "runTest": "psql -U postgres -f drop.sql && psql -U postgres -f setup.sql && cd app && node server.js",
+        "build": "echo \"window.ENV = { BACKEND_URL: '${BACKEND_URL}' }\" > public/config.js"
     },
     "dependencies": {
         "argon2": "^0.30.3",
