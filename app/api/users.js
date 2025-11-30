@@ -20,7 +20,8 @@ let cookieOptions = {
     sameSite: "strict",
 };
 
-app.post("/create-account", async (req, res) => {
+//note, i am changing the route text to be to localbranch address, may need to change it for production
+app.post("pinktigers-localbranchtesting.up.railway.app/create-account", async (req, res) => {
     let reqBody = req.body;
 
     if ((reqBody.hasOwnProperty("username")) && (reqBody.hasOwnProperty("password"))) {
