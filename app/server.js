@@ -4,6 +4,8 @@ const authorize = require("./utils/auth");
 const app = express();
 const cors = require("cors");
 const pg = require("pg");
+const session = require('express-session');
+
 
 // nodes graphic library; Cytoscape.js will be used
 const cytoscape = require('cytoscape');
