@@ -7,7 +7,7 @@ const cors = require("cors");
 
 // nodes graphic library; Cytoscape.js will be used
 const cytoscape = require('cytoscape');
-const pool = require("./utils/db");
+const pool = require("./utils/database");
 
 
 /* changing for Railway back end
