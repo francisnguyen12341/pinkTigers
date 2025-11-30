@@ -4,7 +4,6 @@ const authorize = require("./utils/auth");
 const app = express();
 const cors = require("cors");
 const pg = require("pg");
-const session = require('express-session');
 
 
 // nodes graphic library; Cytoscape.js will be used
@@ -48,21 +47,7 @@ app.use(cors({
 }));
 
 app.options('*', cors());
-// Session config
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'edrepo-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  cookie: {
-    secure: true,
-    httpOnly: true,
-    sameSite: "none",   // REQUIRED for Vercel → Railway
-    maxAge: 24 * 60 * 60 * 1000
-  }
-}));
 
-//session config for cookies and stuff, not sure just pasted it for now. app.option forsomething
 
 
 
