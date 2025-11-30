@@ -38,7 +38,7 @@ function sendCreateAccountRequest() {
         return;
     }
 
-    fetch("pinktigers-localbranchtesting.up.railway.app/create-account", {
+    fetch("https://pinktigers-localbranchtesting.up.railway.app/create-account", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
