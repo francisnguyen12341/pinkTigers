@@ -1,6 +1,6 @@
 //changing the pool here because im assuming this is to pull module from connection which im changing
 //const pool = require("../utils/connection");
-const { pool } = require("../server")
+const { pool } = require("../utils/database")
 //test
 const app = require("express").Router();
 let argon2 = require("argon2");
