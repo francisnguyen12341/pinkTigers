@@ -18,6 +18,9 @@ const password2Field = document.getElementById('password2');
 const submit2Button = document.getElementById("submit2");
 const loginMessageDiv = document.getElementById("loginMessage");
 
+const backend = process.env.RAILWAY_DATABASE_PUBLIC_URL;
+
+
 function checkPasswordMatch() {
     return passwordField.value === repeatPasswordField.value;
 }
@@ -47,7 +50,7 @@ function sendCreateAccountRequest() {
         return;
     }
 
-    fetch("https://pinktigers-localbranchtesting.up.railway.app/create-account", {
+    fetch(`${backend}/create-account`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -72,7 +75,7 @@ function sendCreateAccountRequest() {
 }
 
 function sendLoginRequest() {
-    fetch("https://pinktigers-localbranchtesting.up.railway.app/login", {
+    fetch(`${backend}/login`, {
         method: "POST",
         credentials: "include",
         headers: {
