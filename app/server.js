@@ -19,7 +19,7 @@ const pool = require("./utils/database");
 
 
 
-//cors validation.
+//cors validation. I have two origins listed: one for my local, and one for dev-main.
 app.use(cors({
   origin: [
     "https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app",
