@@ -27,11 +27,41 @@ pool.connect().then(function () {
 */
 
 //app.use, listen only to the vercel app. //adding my own specific deployment for my own testing
+/* old app.use cors testing new one because i get a access denied with this one
 app.use(cors({
     origin: ["https://pink-tigers.vercel.app"
     ], 
     credentials: true
 }));
+*/
+//origin linked to both production and my current branch?
+app.use(cors({
+  origin: [
+    "https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app",
+    "https://pink-tigers.vercel.app"
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options('*', cors());
+// Session config
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'edrepo-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  cookie: {
+    secure: true,
+    httpOnly: true,
+    sameSite: "none",   // REQUIRED for Vercel → Railway
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
+
+//session config for cookies and stuff, not sure just pasted it for now. app.option forsomething
+
 
 
 //test
