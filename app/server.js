@@ -46,7 +46,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options('*', cors());
+//app.options('*', cors());
 
 //app.use(express.static("public")); commenting this because front end lives on Vercel not Railway.
 app.use(express.json());
