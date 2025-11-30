@@ -64,11 +64,7 @@ const pool = new Pool({
 module.exports.pool = pool;
 
 
-// Start server (Railway)
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log("Server running on port " + port);
-});
+
 
 //test commit
 
@@ -89,3 +85,9 @@ app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
 */
+
+// Start server (Railway)
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log("Server running on port " + port);
+});
