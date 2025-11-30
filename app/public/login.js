@@ -40,6 +40,7 @@ function sendCreateAccountRequest() {
 
     fetch("https://pinktigers-localbranchtesting.up.railway.app/create-account", {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
@@ -64,6 +65,7 @@ function sendCreateAccountRequest() {
 function sendLoginRequest() {
     fetch("https://pinktigers-localbranchtesting.up.railway.app/login", {
         method: "POST",
+        redentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
