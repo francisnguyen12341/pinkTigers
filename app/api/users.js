@@ -1,12 +1,13 @@
-console.log("users loaded")
+/*
+    Date: 11/30/2025
+    Comments from Francis for post Francis development and deployment of backend data base.
+    Previously, we had pool (postgres database library variable) directed to ../utils/connection. 
+    Looked like this: //const pool = require("../utils/connection");
+    This is done presumably for local system testing since its connected  to local psql database on your local machine.
+    With this change, my commit will most likely have commmented out ALL code inside of connection.js
+    Note from Francis: I am changing the route text to be to localbranch address, may need to change it for production
 
-//changing the pool here because im assuming this is to pull module from connection which im changing
-//const pool = require("../utils/connection");
-const { pool } = require("../utils/database")
-//test
-const app = require("express").Router();
-let argon2 = require("argon2");
-const crypto = require('crypto');
+*/
 
 // QUICK CURL TESTS
 // create-account: curl -X POST http://localhost:3000/create-account --json '{"username":"vanessa","password":"rawr"}'
@@ -14,6 +15,13 @@ const crypto = require('crypto');
 // get-user-folders: curl "http://localhost:3000/get-user-folders?username=vanessa"
 // logout: curl --cookie "token=thegeneratedtoken" -X DELETE http://localhost:3000/logout
 // login: curl -X POST http://localhost:3000/login --json '{"username":"vanessa","password":"rawr"}'
+
+
+const { pool } = require("../utils/database")
+const app = require("express").Router();
+let argon2 = require("argon2");
+const crypto = require('crypto');
+
 
 function makeToken() {
     return crypto.randomBytes(32).toString("hex");
@@ -25,7 +33,7 @@ let cookieOptions = {
     sameSite: "none",
 };
 
-//note, i am changing the route text to be to localbranch address, may need to change it for production
+
 app.post("/create-account", async (req, res) => {
     let reqBody = req.body;
 
