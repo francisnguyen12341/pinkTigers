@@ -1,55 +1,36 @@
+/*
+    Date: 11/30/2025
+    Comments from Francis for post Francis development and deployment of backend data base.
+    Previously, we had our pool database set up in our server. I moved it over to its own .js file called database in utils
+    I also added in const pool = require("./utils/database"). I forgot why.
+*/
+
+
 let cookieParser = require("cookie-parser");
 const express = require("express");
 const authorize = require("./utils/auth");
 const app = express();
 const cors = require("cors");
 
+
 // nodes graphic library; Cytoscape.js will be used
 const cytoscape = require('cytoscape');
+const pool = require("./utils/database");
 
 
-/* changing for Railway back end
-const port = 3000;
-const hostname = "localhost";
-*/
-//rail way port
-//const port = process.env.PORT || 3000;
 
-
-/* changing this because this uses local system file environment variables. need to use it on railway
-const env = require("../env.json");
-const Pool = pg.Pool;
-const pool = new Pool(env);
-pool.connect().then(function () {
-    console.log(`Connected to database ${env.database}`);
-});
-*/
-
-//app.use, listen only to the vercel app.
+//cors validation. I have two origins listed: one for my local, and one for dev-main.
 app.use(cors({
-    origin: ["https://pink-tigers.vercel.app"], 
-    credentials: true
+  origin: [
+    "https://pink-tigers-git-francis-deployment-test-ftn23s-projects.vercel.app",
+    "https://pink-tigers.vercel.app"
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-
-//test
-
-// PostgreSQL connection from railway back end to rail way database
-const Pool = pg.Pool;
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
-
-// Start server (Railway)
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log("Server running on port " + port);
-});
-
-//test commit
-
-//app.use(express.static("public")); commenting this because front end lives on Vercel not Railway.
+//app.use(express.static("public")); commenting this because front end lives on Vercel not Railway. I think this was used for local testing too idk
 app.use(express.json());
 app.use(cookieParser());
 
@@ -60,7 +41,15 @@ app.get("/private", authorize, (req, res) => {
     return res.send("A private message\n");
 });
 
+
+/* local port stuff for hosting server in local machine. commented out for deployment usage stuff below.
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
 */
+
+// Start server (Railway)
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log("Server running on port " + port);
+});
