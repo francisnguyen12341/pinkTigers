@@ -6,6 +6,8 @@ app.get("/edges", async (req, res) => {
     let body = req.query;
 
     if (body.hasOwnProperty("note1") && body.hasOwnProperty("note2")) {
+        console.log(`Checking edge between note1: ${body.note1} and note2: ${body.note2}`);
+
         pool.query(
             `SELECT id FROM edges 
             WHERE note1 = $1 AND note2 = $2`,
@@ -27,6 +29,28 @@ app.get("/edges", async (req, res) => {
     }
 });
 
+app.get("/edges-all", async (req, res) => {
+    pool.query(`
+        SELECT id, note1, note2 
+        FROM edges
+    `).then(result => {
+        const edges = result.rows.map(row => ({
+            group: 'edges',
+            data: {
+                id: `edge-${row.id}`,
+                source: String(row.note1),
+                target: String(row.note2)
+            }
+        }));
+
+        res.json(edges);
+    }).catch((error) => {
+        console.log(error);
+        res.status(500);
+        res.send();
+    });
+});
+
 app.post("/edges", async (req, res) => {
     let body = req.body;
 
@@ -41,7 +65,7 @@ app.post("/edges", async (req, res) => {
             [note1, note2],
         )
             .then((result) => {
-                console.log("Edge Inserted Successfully");
+                console.log(`Edge Inserted Successfully`);
                 res.statusCode = 200;
                 res.json({ id: result.rows[0].id });
             })
@@ -67,7 +91,7 @@ app.delete("/edges", async (req, res) => {
             [body.note1, body.note2]
         ).then(result => {
             if (result.rows.length > 0) {
-                console.log(`Deleted edge between: ${body.note1} and ${body.note2}`);
+                console.log(`Edge ${body.note1} and ${body.note2} deleted`);
                 res.status(200);
                 res.json({ id: result.rows[0].id });
             } else {
