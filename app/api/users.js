@@ -17,7 +17,8 @@
 // login: curl -X POST http://localhost:3000/login --json '{"username":"vanessa","password":"rawr"}'
 
 
-const { pool } = require("../utils/database")
+// const { pool } = require("../utils/database")
+const pool = require("../utils/connection")
 const app = require("express").Router();
 let argon2 = require("argon2");
 const crypto = require('crypto');
@@ -65,13 +66,27 @@ app.post("/create-account", async (req, res) => {
             return;
         }
 
-        await pool.query(`INSERT INTO folders (name, parent_id) VALUES ($1, $2);`, ["root", null]).then(() => {
+        let rootFolderId;
+        await pool.query(`INSERT INTO folders (name, parent_id) VALUES ($1, $2) RETURNING id;`, ["root", null]).then((result) => {
+            rootFolderId = result.rows[0].id;
             console.log(`Successfully added root folder`);
         }).catch(err => {
             console.log("Error inserting root folder:", err);
             res.status(500);
             res.send();
         });
+
+        if (rootFolderId) {
+            await pool.query(`UPDATE users SET main_folder_id = $1 WHERE username = $2;`, [rootFolderId, userName])
+                .then(() => {
+                    console.log(`Successfully updated user ${userName} with main_folder_id ${rootFolderId}`);
+                })
+                .catch(err => {
+                    console.log("Error updating user's main_folder_id:", err);
+                    res.status(500);
+                    res.send();
+                });
+        }
 
         let token = makeToken();
 
