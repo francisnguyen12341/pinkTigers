@@ -84,9 +84,9 @@
             /* Increased text to enable scrolling */
             padding: 0px 10px;
         }
-
-        /* Add an active class to the active dropdown button */
-        .active {
+        
+        .sidenav .dropdown-btn.active,
+        .sidenav a.active {
             background-color: green;
             color: white;
         }
@@ -166,36 +166,6 @@
 
         <script src="frontEndScript.js"></script>
         <script src="nav.js"></script>
-        <script>
-            fetch("/sidenav")
-                .then(response => response.text())
-                .then(html => {
-                    // Insert sidenav HTML
-                    const sideNavDiv = document.getElementById("sideNav");
-                    sideNavDiv.insertAdjacentHTML('beforeend', html);
-
-                    // Inserted sidenav HTML does not seem to have the proper CSS toggling properties...
-                    // Add event listener to see whenever the user clicks on a dropdown button
-                    sideNavDiv.addEventListener('click', function(event) {
-                        // Check if the clicked element is a dropdown button
-                        if (event.target && event.target.classList.contains("dropdown-btn")) {
-                            const dropdownContainer = event.target.nextElementSibling;  // The div right after the button
-                            // Toggle dropdown visibility
-                            dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
-
-                            // Toggle green glow for parent folder of dropdown
-                            event.target.classList.toggle("active");
-
-                            // Update URL... assumes the class is like "dropdown-btn testFolder2"
-                            const folderName = event.target.classList[1];
-                            location.hash = `#${folderName}`;
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error("Error fetching sideNav:", error);
-                });
-        </script>
     </div>
 </body>
 

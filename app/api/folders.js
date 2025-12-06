@@ -148,6 +148,40 @@ app.post("/folder", (req, res) => {
     }
 });
 
+app.put("/folder", (req, res) => {
+    let query = req.query;
+    let body = req.body;
+    if(query.hasOwnProperty("name") && body.hasOwnProperty("newName")) {
+        let oldName = query.name;
+        let newName = body.newName;
+        pool.query(
+            `UPDATE folders SET name = $1 WHERE name = $2
+            RETURNING *`,
+            [newName, oldName],
+        ).then((result) => {
+            if (result.rows.length > 0) {
+                console.log(`Updated folder: ${oldName} to ${newName}`);
+                res.status(200);
+                res.setHeader("Content-Type", "text/json");
+                res.json({ message: `${oldName}} has been updated successfully to ${newName}.` });
+            } else {
+                console.log(`Folder not found: ${oldName}`);
+                res.status(404);
+                res.setHeader("Content-Type", "text/json");
+                res.json({ error: "Folder not found." });
+            }
+        }).catch((error) => {
+            console.log("Error updating folder:", error);
+            res.status(500);
+            res.setHeader("Content-Type", "text/json");
+            res.json({ error: "Server error" });
+        });
+    } else {
+        console.log("Missing name query and/or newName body");
+        res.status(400).json({ error: "Missing name query and/or newName body." });
+    }
+});
+
 app.delete("/folder", (req, res) => {
     let query = req.query;
     if (query.hasOwnProperty("name")) {
@@ -182,13 +216,29 @@ app.delete("/folder", (req, res) => {
     }
 });
 
-async function createNavBar() {
+async function createNavBar(cookie) {
     try {
         let sideNav = "";
 
-        // Get all folders
-        let result = await pool.query(`SELECT * FROM folders`);
-        let allFolders = result.rows;
+        let token = cookie.token;
+        let user = await pool.query(`SELECT username FROM tokens WHERE token = $1;`, [token]);
+        let userName = user.rows[0].username;
+        let rootFolder = await pool.query(`SELECT main_folder_id FROM users WHERE username = $1;`, [userName]);
+        let mainFolderId = rootFolder.rows[0].main_folder_id;
+        let userFolders = await pool.query(`
+        WITH RECURSIVE folder_hierarchy AS (
+                SELECT id, name, parent_id
+                FROM folders
+                WHERE id = $1
+                UNION ALL
+                SELECT f.id, f.name, f.parent_id
+                FROM folders f
+                JOIN folder_hierarchy fh ON fh.id = f.parent_id
+            )
+            SELECT * FROM folder_hierarchy;
+        `, [mainFolderId]);
+        let allFolders = userFolders.rows;
+        console.log("allFolders:", allFolders);
 
         // Create object for folder hierarchy (to know which folders have children)
         let folderHierarchy = {};
@@ -205,7 +255,7 @@ async function createNavBar() {
         for (let folder of allFolders) {
             // Single Top Level Folder: Has no children and is not a child of anyone else
             if (!folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
-                sideNav += `<a href="#${folder.name}">${folder.name}</a>`;
+                sideNav += `<a class="single ${folder.name}">${folder.name}</a>`;
             } // Top Level Folder: Has children and is not a child of anyone else
             else if (folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
                 sideNav += await createChildren(folder, folderHierarchy);
@@ -243,7 +293,7 @@ async function createChildren(folder, folderHierarchy) {
     for(let childFolder of folderHierarchy[folder.id]) {
         // The child folder has no child folders under it
         if(!folderHierarchy[childFolder.id]) {
-            sideNavChildren += `<a href="#${childFolder.name}">${childFolder.name}</a>`;
+            sideNavChildren += `<a class="single ${childFolder.name}">${childFolder.name}</a>`;
         }
         // The child folder has more child folders under it (nested children)
         else {
@@ -257,12 +307,16 @@ async function createChildren(folder, folderHierarchy) {
 
 app.get("/sidenav", async (req, res) => {
     try {
-        const navBar = await createNavBar();
+        const cookie = req.cookies;
+        const navBar = await createNavBar(cookie);
         res.statusCode = 200;
         res.setHeader("Content-Type", "text/html");
         res.send(`
             <div class="sidenav">
                 ${navBar}
+                <a class="add-folder">Add Folder</a>
+                <a class="update-folder">Update Folder</a>
+                <a class="remove-folder">Remove Folder</a>
             </div>
         `);
     } catch (error) {
