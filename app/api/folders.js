@@ -255,7 +255,6 @@ async function createNavBar(cookie) {
         for (let folder of allFolders) {
             // Single Top Level Folder: Has no children and is not a child of anyone else
             if (!folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
-                // sideNav += `<a href="#${folder.name}">${folder.name}</a>`;
                 sideNav += `<a class="single ${folder.name}">${folder.name}</a>`;
             } // Top Level Folder: Has children and is not a child of anyone else
             else if (folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
@@ -294,7 +293,6 @@ async function createChildren(folder, folderHierarchy) {
     for(let childFolder of folderHierarchy[folder.id]) {
         // The child folder has no child folders under it
         if(!folderHierarchy[childFolder.id]) {
-            // sideNavChildren += `<a href="#${childFolder.name}">${childFolder.name}</a>`;
             sideNavChildren += `<a class="single ${childFolder.name}">${childFolder.name}</a>`;
         }
         // The child folder has more child folders under it (nested children)

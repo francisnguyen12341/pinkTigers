@@ -1,18 +1,3 @@
-// var dropdown = document.getElementsByClassName("dropdown-btn");
-// var i;
-
-// for (i = 0; i < dropdown.length; i++) {
-//   dropdown[i].addEventListener("click", function() {
-//     this.classList.toggle("active");
-//     var dropdownContent = this.nextElementSibling;
-//     if (dropdownContent.style.display === "block") {
-//       dropdownContent.style.display = "none";
-//     } else {
-//       dropdownContent.style.display = "block";
-//     }
-//   });
-// }
-
 async function getParentIdFromHash() {
     const folderName = location.hash.replace('#', '');  // Get folder name from hash (remove "#")
     if (folderName) {
@@ -46,13 +31,6 @@ async function singleClickHandler(event) {
         const dropdownContainer = event.target.nextElementSibling;  // The div right after the button
         // Toggle dropdown visibility
         dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
-
-        // Toggle green glow for parent folder of dropdown
-        // event.target.classList.toggle("active");
-
-        // Update URL... assumes the class is like "dropdown-btn testFolder2"
-        // const folderName = event.target.classList[1];
-        // location.hash = `#${folderName}`;
     }
 
     else if(event.target && event.target.classList.contains("add-folder")) {
@@ -127,7 +105,7 @@ async function singleClickHandler(event) {
             if (response.status === 200) {
                 console.log('Folder delete successfully!');
                 refreshSidenav();
-                location.hash = "#root"; // go to default folder
+                location.hash = ""; // no selected folder
             } else {
                 console.log('Failed to delete folder');
             }
@@ -157,7 +135,6 @@ function refreshSidenav() {
     .then(html => {
         // Insert sidenav HTML
         const sideNavDiv = document.getElementById("sideNav");
-        // sideNavDiv.insertAdjacentHTML('beforeend', html);
         sideNavDiv.innerHTML = html;
 
         // Inserted sidenav HTML does not seem to have the proper CSS toggling properties...
@@ -178,7 +155,6 @@ fetch("/sidenav", {credentials: 'include'})
     .then(html => {
         // Insert sidenav HTML
         const sideNavDiv = document.getElementById("sideNav");
-        // sideNavDiv.insertAdjacentHTML('beforeend', html);
         sideNavDiv.innerHTML = html;
 
         // Inserted sidenav HTML does not seem to have the proper CSS toggling properties...
