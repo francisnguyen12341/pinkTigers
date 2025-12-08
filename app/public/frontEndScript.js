@@ -5,13 +5,16 @@ let activeNode = null;
 
 async function loadGraph() {
     try {
-        const nodesRes = await fetch("/notes");
+        cy.elements().remove();  // Remove all existing elements (nodes and edges)
+        
+        let activeFolderId = await getActiveFolderId();
+        const nodesRes = await fetch(`/notes?folder_id=${activeFolderId}`);
         const nodes = await nodesRes.json();
         cy.add(nodes);
 
         nodeCount = nodes.length;
 
-        const edgesRes = await fetch("/edges-all");
+        const edgesRes = await fetch(`/edges-all?folder_id=${activeFolderId}`);
         const edges = await edgesRes.json();
         
         cy.add(edges);
@@ -212,11 +215,13 @@ cy.on('tap', 'node', event => {
 
 
 // to add new nodes
-document.getElementById('addNodeButton').addEventListener('click', () => {
+document.getElementById('addNodeButton').addEventListener('click', async () => {
     nodeCount++;
 
     // Save the new node to the backend
     const errorDiv = document.getElementById("errorDiv");
+
+    let parentId = await getActiveFolderId();
 
     fetch("/notes", {
         method: "POST",
@@ -226,7 +231,7 @@ document.getElementById('addNodeButton').addEventListener('click', () => {
             x: 100,
             y: 100,
             content: '',
-            folder_id: 1,
+            folder_id: parentId,
         })
     }).then(response => {
         if (!response.ok) {

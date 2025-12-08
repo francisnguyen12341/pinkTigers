@@ -255,7 +255,7 @@ async function createNavBar(cookie) {
         for (let folder of allFolders) {
             // Single Top Level Folder: Has no children and is not a child of anyone else
             if (!folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
-                sideNav += `<a class="single ${folder.name}">${folder.name}</a>`;
+                sideNav += `<a class="single ${folder.name} ${folder.id}">${folder.name}</a>`;
             } // Top Level Folder: Has children and is not a child of anyone else
             else if (folderHierarchy[folder.id] && !isAChild(folder, folderHierarchy)) {
                 sideNav += await createChildren(folder, folderHierarchy);
@@ -285,7 +285,7 @@ function isAChild(folder, folderHierarchy) {
 async function createChildren(folder, folderHierarchy) {
     sideNavChildren = "";
     sideNavChildren += `
-                <button class="dropdown-btn ${folder.name}"> ${folder.name}
+                <button class="dropdown-btn ${folder.name} ${folder.id}"> ${folder.name}
                     <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="dropdown-container">`
@@ -293,7 +293,7 @@ async function createChildren(folder, folderHierarchy) {
     for(let childFolder of folderHierarchy[folder.id]) {
         // The child folder has no child folders under it
         if(!folderHierarchy[childFolder.id]) {
-            sideNavChildren += `<a class="single ${childFolder.name}">${childFolder.name}</a>`;
+            sideNavChildren += `<a class="single ${childFolder.name} ${childFolder.id}">${childFolder.name}</a>`;
         }
         // The child folder has more child folders under it (nested children)
         else {
@@ -313,7 +313,7 @@ app.get("/sidenav", async (req, res) => {
         res.setHeader("Content-Type", "text/html");
         res.send(`
             <div class="sidenav">
-                ${navBar}
+                ${navBar ? navBar : ""}
                 <a class="add-folder">Add Folder</a>
                 <a class="update-folder">Update Folder</a>
                 <a class="remove-folder">Remove Folder</a>

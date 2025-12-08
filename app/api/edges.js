@@ -30,25 +30,51 @@ app.get("/edges", async (req, res) => {
 });
 
 app.get("/edges-all", async (req, res) => {
-    pool.query(`
-        SELECT id, note1, note2 
-        FROM edges
-    `).then(result => {
-        const edges = result.rows.map(row => ({
-            group: 'edges',
-            data: {
-                id: `edge-${row.id}`,
-                source: String(row.note1),
-                target: String(row.note2)
-            }
-        }));
+    let query = req.query;
+    if (query.hasOwnProperty("folder_id")) {
+        pool.query(`
+            SELECT id, note1, note2 
+            FROM edges
+            WHERE note1 IN (SELECT id FROM notes WHERE folder_id = $1)
+            OR note2 IN (SELECT id FROM notes WHERE folder_id = $1)
+        `, [query.folder_id]).then(result => {
+            const edges = result.rows.map(row => ({
+                group: 'edges',
+                data: {
+                    id: `edge-${row.id}`,
+                    source: String(row.note1),
+                    target: String(row.note2)
+                }
+            }));
 
-        res.json(edges);
-    }).catch((error) => {
-        console.log(error);
-        res.status(500);
-        res.send();
-    });
+            res.json(edges);
+        }).catch((error) => {
+            console.log(error);
+            res.status(500);
+            res.send();
+        });
+    }
+    else {
+        pool.query(`
+            SELECT id, note1, note2 
+            FROM edges
+        `).then(result => {
+            const edges = result.rows.map(row => ({
+                group: 'edges',
+                data: {
+                    id: `edge-${row.id}`,
+                    source: String(row.note1),
+                    target: String(row.note2)
+                }
+            }));
+
+            res.json(edges);
+        }).catch((error) => {
+            console.log(error);
+            res.status(500);
+            res.send();
+        });
+    }
 });
 
 app.post("/edges", async (req, res) => {
