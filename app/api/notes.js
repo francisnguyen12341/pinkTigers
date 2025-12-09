@@ -4,7 +4,14 @@ const app = require("express").Router();
 //end points for making notes
 app.get("/notes", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM notes");
+    let result;
+    let query = req.query;
+    if (query.hasOwnProperty("folder_id")) {
+        result = await pool.query("SELECT * FROM notes WHERE folder_id = $1", [query.folder_id]);
+    }
+    else {
+        result = await pool.query("SELECT * FROM notes");
+    }
 
     const nodes = result.rows.map(row => ({
         data: {
