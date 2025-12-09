@@ -6,7 +6,7 @@ let activeNode = null;
 async function loadGraph() {
     try {
         cy.elements().remove();  // Remove all existing elements (nodes and edges)
-        
+
         let activeFolderId = await getActiveFolderId();
         const nodesRes = await fetch(`/notes?folder_id=${activeFolderId}`);
         const nodes = await nodesRes.json();
@@ -74,7 +74,7 @@ const cy = cytoscape({
     layout: { name: 'preset' },
 });
 
-loadGraph();
+// loadGraph();
 
 cy.on('mouseover', 'node', (event) => {
     const node = event.target;

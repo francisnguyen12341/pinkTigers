@@ -299,13 +299,22 @@ fetch("/sidenav", {credentials: 'include'})
         sideNavDiv.addEventListener('click', singleClickHandler);
         sideNavDiv.addEventListener('dblclick', doubleClickHandler);
 
-        // Set the root folder as active
-        const rootFolder = document.querySelector('.sidenav .root');
-        if (rootFolder) {
-            rootFolder.classList.add('active');
-        }
+        // On initial page load, set root folder as active
         if (!location.hash) {
+            // Set the root folder as active
+            const rootFolder = document.querySelector('.sidenav .root');
+            if (rootFolder) {
+                rootFolder.classList.add('active');
+            }
             location.hash = `#root`;
+        }
+        // Else, we are reloading the page from a specific folder
+        else {
+            const previousSelectedFolder = document.querySelector(`.sidenav .${location.hash.replace('#', '')}`);
+            if (previousSelectedFolder) {
+                previousSelectedFolder.classList.add('active');
+            }
+            loadGraph();
         }
     })
     .catch(error => {
