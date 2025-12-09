@@ -52,7 +52,16 @@ async function singleClickHandler(event) {
     if (event.target && event.target.classList.contains("dropdown-btn")) {
         const dropdownContainer = event.target.nextElementSibling;  // The div right after the button
         // Toggle dropdown visibility
-        dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
+        
+
+        //adding sessionStorage for keeping the state of nav bar
+        const newState = dropdownContainer.style.display === 'block' ? 'none' : 'block';
+        dropdownContainer.style.display = newState;
+
+        const folderId = event.target.classList[2];
+        sessionStorage.setItem(`dropdown-${folderId}`, newState);
+
+        return;
     }
 
     else if(event.target && event.target.classList.contains("add-folder")) {
@@ -271,6 +280,21 @@ async function refreshSidenav() {
         const sideNavDiv = document.getElementById("sideNav");
         sideNavDiv.innerHTML = html;
 
+
+        //part of loading the state
+        document.querySelectorAll('.dropdown-btn').forEach(btn => {
+            const folderId = btn.classList[2];
+            const savedState = sessionStorage.getItem(`dropdown-${folderId}`);
+            const dropdownContainer = btn.nextElementSibling;
+
+            if (savedState) {
+                dropdownContainer.style.display = savedState;
+            }
+        });
+
+
+
+
         // Inserted sidenav HTML does not seem to have the proper CSS toggling properties...
         // Add event listener to see whenever the user clicks on a dropdown button
         // Note: Need to remove and readd event listeners to apply to entire updated side nav
@@ -287,9 +311,22 @@ async function refreshSidenav() {
 fetch("/sidenav", {credentials: 'include'})
     .then(response => response.text())
     .then(html => {
+
         // Insert sidenav HTML
         const sideNavDiv = document.getElementById("sideNav");
         sideNavDiv.innerHTML = html;
+
+
+        // do a first load for the sessionsStash
+        document.querySelectorAll('.dropdown-btn').forEach(btn => {
+            const folderId = btn.classList[2];
+            const savedState = sessionStorage.getItem(`dropdown-${folderId}`);
+            const dropdownContainer = btn.nextElementSibling;
+
+            if (savedState) {
+                dropdownContainer.style.display = savedState;
+            }
+        });
 
         // Inserted sidenav HTML does not seem to have the proper CSS toggling properties...
         // Add event listener to see whenever the user clicks on a dropdown button
