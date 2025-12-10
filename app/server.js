@@ -30,7 +30,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-//app.use(express.static("public")); commenting this because front end lives on Vercel not Railway. I think this was used for local testing too idk
+app.use(express.static("public")); // commenting this because front end lives on Vercel not Railway. I think this was used for local testing too idk
 app.use(express.json());
 app.use(cookieParser());
 
@@ -42,14 +42,16 @@ app.get("/private", authorize, (req, res) => {
 });
 
 
-/* local port stuff for hosting server in local machine. commented out for deployment usage stuff below.
+// local port stuff for hosting server in local machine. commented out for deployment usage stuff below.
+const port = 3000;
+const hostname = "localhost";
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
-*/
+
 
 // Start server (Railway)
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log("Server running on port " + port);
-});
+// const port = process.env.PORT || 3000;
+// app.listen(port, () => {
+//     console.log("Server running on port " + port);
+// });

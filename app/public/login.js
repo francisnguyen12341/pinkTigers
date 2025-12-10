@@ -18,8 +18,8 @@ const password2Field = document.getElementById('password2');
 const submit2Button = document.getElementById("submit2");
 const loginMessageDiv = document.getElementById("loginMessage");
 
-const backend = window.ENV.BACKEND_URL;
-
+// const backend = window.ENV.BACKEND_URL;
+const backend = "";
 
 function checkPasswordMatch() {
     return passwordField.value === repeatPasswordField.value;

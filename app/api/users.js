@@ -17,7 +17,8 @@
 // login: curl -X POST http://localhost:3000/login --json '{"username":"vanessa","password":"rawr"}'
 
 
-const { pool } = require("../utils/database")
+// const { pool } = require("../utils/database")
+const pool = require("../utils/connection")
 const app = require("express").Router();
 let argon2 = require("argon2");
 const crypto = require('crypto');
